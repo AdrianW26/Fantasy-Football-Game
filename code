@@ -1,0 +1,407 @@
+import java.io.*;
+import java.util.Scanner;
+import java.util.Random;
+
+class Team
+{
+    String team;
+    int goals_for;
+    int goals_against;
+
+}
+
+class User_controlled_team
+{
+    String name;
+    int goals_for;
+    int goals_against;
+    int wins;
+    int draws;
+    int losses;
+    int points;
+}
+
+class Fantasy_Football
+{
+    public static void main(String[] param) throws IOException {
+        FantasyFootball();
+        return;
+    }//END main
+
+
+    //Initiates the game
+    //
+    public static void FantasyFootball() throws IOException
+    {
+        String answer = "y";
+        while (answer.equals("y")) {
+            String[] Premier_league = {"Arsenal", "Aston Villa FC", "Bournemouth AFC", "Brentford", "Brighton & Hove Albion", "Burnley FC", "Chelsea FC", "Crystal Palace FC", "Everton FC", "Fulham FC", "Liverpool FC", "Luton Town FC", "Manchester City FC", "Manchester United FC", "Newcastle United FC", "Nottingham Forest FC", "Sheffield United FC", "Tottenham Hotspur FC", "West Ham United FC", "Wolverhampton Wanderers", "Arsenal", "Aston Villa FC", "Bournemouth AFC", "Brentford", "Brighton & Hove Albion", "Burnley FC", "Chelsea FC", "Crystal Palace FC", "Everton FC", "Fulham FC", "Liverpool FC", "Luton Town FC", "Manchester City FC", "Manchester United FC", "Newcastle United FC", "Nottingham Forest FC", "Sheffield United FC", "Tottenham Hotspur FC", "West Ham United FC", "Wolverhampton Wanderers"};
+            Team[] teams_played = new Team[40];
+
+            String save_question = inputString("Do you have a save file? (y/n)");
+
+            if(!(save_question.equals("y")))
+            {
+                final int initial_value = 0;
+                final int Player_controlled_team = Choose_team();
+                User_controlled_team user_team = new User_controlled_team();
+                user_team = Create_User_Team(user_team, Player_controlled_team, Premier_league, initial_value, initial_value, initial_value, initial_value, initial_value, initial_value);
+                Matches(Premier_league, user_team, Player_controlled_team, teams_played, initial_value);
+                Print(user_team);
+            }
+            else
+            {
+                String file_name = inputString("What is the name of the file?");
+                BufferedReader file = new BufferedReader(new FileReader(file_name));
+
+                String file_counter = file.readLine();
+                int goals = Integer.parseInt(file.readLine());
+                int concede = Integer.parseInt(file.readLine());
+                int wins = Integer.parseInt(file.readLine());
+                int draws = Integer.parseInt(file.readLine());
+                int losses = Integer.parseInt(file.readLine());
+                int points = Integer.parseInt(file.readLine());
+                int matches_played = Integer.parseInt(file.readLine());
+                final int Player_controlled_team = Integer.parseInt(file.readLine());
+
+                for(int i=0; i<matches_played; i++)
+                {
+                    String team_name = file.readLine();
+                    int goal = Integer.parseInt(file.readLine());
+                    int goal_against = Integer.parseInt(file.readLine());
+                    teams_played[i] = Create_record(team_name, goal, goal_against);
+                }
+                User_controlled_team user_team = new User_controlled_team();
+                user_team = Create_User_Team(user_team, Player_controlled_team, Premier_league, goals, concede, wins, draws, losses, points);
+                Matches(Premier_league, user_team, Player_controlled_team, teams_played, matches_played);
+                Print(user_team);
+            }
+            System.out.println("Would you like to play again? (y/n)");
+            Scanner scanner = new Scanner(System.in);
+            answer = scanner.nextLine();
+        }
+    } //END FantasyFootball
+
+
+
+    // Allows for user input
+    //
+    public static String inputString(String message)
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(message);
+        return scanner.nextLine();
+    } //END inputString
+
+
+    // Asks the user for the team they will use
+    //
+    public static int Choose_team() {
+        Scanner scanner = new Scanner(System.in);
+        int answer = 0;
+        int i;
+
+        for (i = 0; i < 1; i++)
+        {
+            System.out.println("Please select the corresponding number for the team you would like to play as: 1.Arsenal, 2.Aston Villa FC, 3.Bournemouth AFC, 4.Brentford,");
+            System.out.println("5.Brighton & Hove Albion, 6.Burnley FC, 7.Chelsea FC, 8.Crystal Palace FC, 9.Everton FC, 10.Fulham FC, 11.Liverpool FC, 12.Luton Town FC, 13.Manchester City FC,");
+            System.out.println("14.Manchester United FC, 15.Newcastle United FC, 16.Nottingham Forest FC, 17.Sheffield United FC, 18.Tottenham Hotspur FC, 19.West Ham United FC, 20.Wolverhampton Wanderers.");
+            if (scanner.hasNextInt()) {
+                answer = scanner.nextInt();
+                if (0 < answer && answer < 21) {
+                    answer = answer - 1;
+                } else {
+                    i = -1;
+                    System.out.println("Please enter a suitable value.");
+                    scanner.nextLine();
+                }
+            } else {
+                i = -1;
+                System.out.println("Please enter a suitable value");
+                scanner.nextLine();
+            }
+        }
+        return answer;
+    } //END Choose_team
+
+
+    // Creates a record for the user's team
+    //
+    public static User_controlled_team Create_User_Team(User_controlled_team i, int value, String [] Premier_League, int goals, int concede, int win, int draw, int loss, int points)
+    {
+        i.name = Premier_League [value];
+        i.goals_for = goals;
+        i.goals_against = concede;
+        i.wins = win;
+        i.draws = draw;
+        i.losses = loss;
+        i.points = points;
+
+        return i;
+    } // END Create_User_Team
+
+
+    // Plays matches against all teams and asks if the user would like to save
+    //
+    public static void Matches(String [] Premier_League, User_controlled_team i, int Player_controlled_team, Team [] teams_played, int matches_played) throws IOException
+    {
+        String [] players = {"Anatolii Trubin", "Iván Fresneda", "António Silva", "Emmanuel", "Brinley Satterley", "Fabián Clavero", "Brian Sibanda", "Ferenc Kővári", "Leon Hutchinson", "Endrick", "Jacob Buffonge"};
+        for (int match_counter_2 = matches_played; match_counter_2<40; match_counter_2++)
+        {
+            int goals_1 = 0;
+            int goals_2 = 0;
+            int match_day = match_counter_2+1;
+            System.out.println("Matchday: " +match_day);
+            if (Player_controlled_team==match_counter_2 || match_counter_2==(Player_controlled_team+20))
+            {
+                System.out.println("No match played today.");
+            }
+            else
+            {
+                for (int event_counter = 0; event_counter<3; event_counter++) {
+
+                    goals_1 = goals_1 + event_generator(players);
+                    goals_2 = goals_2 + event_generator_2(players);
+                }
+                setGoals_for(i, (getGoals_for(i)+goals_1));
+                setGoals_against(i, (getGoals_against(i)+goals_2));
+
+                if (goals_1<goals_2)
+                {
+                    setLosses(i, (getLosses(i)+1));
+                    System.out.println("You have lost the game.");
+                }
+                else if (goals_1 == goals_2)
+                {
+                    setDraws(i, (getDraws(i)+1));
+                    setPoints(i, (getPoints(i)+1));
+                    System.out.println("You have drawn the game.");
+                }
+                else
+                {
+                    setWins(i, (getWins(i)+1));
+                    setPoints(i, (getPoints(i)+3));
+                    System.out.println("You have won the game.");
+
+                }
+                System.out.println("Score: " +goals_1+ ":" +goals_2);
+                System.out.println("");
+            }
+            teams_played [match_counter_2] = Create_record(Premier_League [match_counter_2], goals_1, goals_2);
+
+            String save_question = inputString("Would you like to save the game? (y/n)");
+            if (save_question.equals("y"))
+            {
+                SAVE_GAME(i,match_counter_2,Player_controlled_team, teams_played);
+            }
+            else {}
+        }
+        for (int v=0; v<40; v++)
+        {
+            if (Player_controlled_team==v || v==(Player_controlled_team +20))
+            {
+                System.out.println("No match played today.");
+            }
+            else
+            {
+                System.out.println("");
+                System.out.println("Opponent: " +teams_played[v].team);
+                System.out.println("Goals scored: " + teams_played[v].goals_for);
+                System.out.println("Goals conceded: " +teams_played[v].goals_against);
+            }
+        }
+    }
+    //END Matches
+
+
+    // Generates an event to determine if a goal is scored
+    //
+    public static int event_generator(String [] players)
+    {
+        Random event = new Random();
+        Random player = new Random();
+        String [] events = {" scored a goal.", " curls one in.", " strikes it wide.", " misses from the spot."};
+
+        String player_chosen = players [player.nextInt(10) + 1];
+        int event_value = event.nextInt(4);
+        String event_chosen = events [event_value];
+        System.out.println(player_chosen+event_chosen);
+        int goal = 0;
+
+        if (event_value == 0 || event_value == 1)
+        {
+            goal = 1;
+        }
+        return goal;
+    } //END event_generator
+
+
+    // Generates an event to determine if a goal is conceded
+    //
+    public static int event_generator_2(String [] players)
+    {
+        Random event = new Random();
+        String [] events = {" is sent the wrong way.", " couldn't get a hand to it.", " parries it for a corner.", " saves the shot."};
+
+        String player_chosen = players[0];
+        int event_value = event.nextInt(4);
+        String event_chosen = events [event_value];
+        System.out.println(player_chosen+event_chosen);
+        int goal = 0;
+
+        if (event_value == 0 || event_value == 1)
+        {
+            goal = 1;
+        }
+        return goal;
+    } //END event_generator_2
+
+
+
+    // Returns goals scored
+    //
+    public static int getGoals_for(User_controlled_team i)
+    {
+        return i.goals_for;
+    } //END getGoals_for
+
+    // Adds number of goals to user's total
+    //
+    public static void setGoals_for(User_controlled_team i, int goals)
+    {
+        i.goals_for = goals;
+    } //END setGoals_for
+
+    // Returns goals conceded
+    //
+    public static int getGoals_against(User_controlled_team i)
+    {
+        return i.goals_against;
+    } //END getGoals_against
+
+    // Adds goals conceded to user's total
+    //
+    public static void setGoals_against(User_controlled_team i, int goals)
+    {
+        i.goals_against = goals;
+    } //END setGoals_against
+
+    // Returns loss total
+    //
+    public static int getLosses(User_controlled_team i)
+    {
+        return i.losses;
+    } //END getLosses
+
+    // Adds a loss to user's total
+    //
+    public static void setLosses(User_controlled_team i, int loss)
+    {
+        i.losses = loss;
+    } //END setLosses
+
+    // Returns draws total
+    //
+    public static int getDraws(User_controlled_team i)
+    {
+        return i.draws;
+    } //END getDraws
+
+    // Adds a draw to user's total
+    //
+    public static void setDraws(User_controlled_team i, int draws)
+    {
+        i.draws = draws;
+    } //END setDraws
+
+    // Returns wins total
+    //
+    public static int getWins (User_controlled_team i)
+    {
+        return i.wins;
+    } //END getWins
+
+    // Adds a win to user's total
+    //
+    public static void setWins(User_controlled_team i, int wins)
+    {
+        i.wins = wins;
+    } //END setWins
+
+    // Returns points total
+    //
+    public static int getPoints(User_controlled_team i)
+    {
+        return i.points;
+    } //END getPoints
+
+    // Adds points to user's total
+    //
+    public static void setPoints(User_controlled_team i, int points)
+    {
+        i.points = points;
+    } //END setPoints
+
+    // Returns the team name
+    //
+    public static String getName(User_controlled_team i)
+    {
+        return i.name;
+    } //END getName
+
+
+    // Prints the user's final points tally
+    //
+    public static void Print(User_controlled_team i)
+    {
+        System.out.println("");
+        System.out.println(getName(i)+ ":");
+        System.out.println("Your record is: " +getWins(i)+ " win, " +getDraws(i)+ " draw and " +getLosses(i)+ " losses.");
+        System.out.println("You scored " +getGoals_for(i)+ " and conceded " +getGoals_against(i)+ ".");
+        System.out.println("You have a total of " +getPoints(i)+ " points.");
+    } //END Print
+
+
+    // Creates a record for a match
+    //
+    public static Team Create_record(String name, int goals_1, int goals_2)
+    {
+        Team team_played = new Team();
+            team_played.team = name;
+            team_played.goals_for = goals_1;
+            team_played.goals_against = goals_2;
+        return team_played;
+    } //END Create_record
+
+
+
+    // Saves the user's game at the point they choose
+    //
+    public static void SAVE_GAME(User_controlled_team i, int match_counter, int Player_controlled_team, Team [] teams_played) throws IOException
+    {
+        int matches_played = match_counter + 1;
+
+        String file_name = inputString("Give a name for the save file ending with .txt");
+        PrintWriter file = new PrintWriter(new FileWriter(file_name));
+
+        file.println(i.name);
+        file.println(i.goals_for);
+        file.println(i.goals_against);
+        file.println(i.wins);
+        file.println(i.draws);
+        file.println(i.losses);
+        file.println(i.points);
+        file.println(matches_played);
+        file.println(Player_controlled_team);
+
+        for (int v=0; v<=match_counter; v++)
+        {
+            file.println(teams_played[v].team);
+            file.println(teams_played[v].goals_for);
+            file.println(teams_played[v].goals_against);
+        }
+        System.out.println("Game has been saved.");
+        file.close();
+        System.exit(0);
+    } //END SAVEGAME
+}
